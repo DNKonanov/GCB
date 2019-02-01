@@ -1,16 +1,16 @@
 # GCB_package
 Stand-alone version of the GCB-service
 
-##Installation manual
+## Installation manual
 
-###Install dependencies
+### Install dependencies
 
 `sudo apt-get install graphviz graphviz-dev python3-graphviz python3-pygraphviz`
 `pip3 install -r requirements.txt`
 
-##Usage
+## Usage
 
-###Start server
+### Start server
 
 To start GCB server on your computer type in GCB_package folder this:
 `python3 gcb_server.py`
@@ -18,7 +18,7 @@ To start GCB server on your computer type in GCB_package folder this:
 So, you can open **127.0.0.1:5000** or **localhost:5000** adress in your web-browser and use GCB
 There is no any dataset in the github-version of the GCB_package. You can download version with pre-computed *Escherichia coli* dataset from [SourceForge](https://sourceforge.net/projects/gcb-package/)
 
-###Add data
+### Add data
 
 Most easy way to add dataset is `full_comtainer.py` script
 
