@@ -6,6 +6,7 @@ Stand-alone version of the GCB-service
 ### Install dependencies
 
 `sudo apt-get install graphviz graphviz-dev python3-graphviz python3-pygraphviz`
+
 `pip3 install -r requirements.txt`
 
 ## Usage
@@ -13,6 +14,7 @@ Stand-alone version of the GCB-service
 ### Start server
 
 To start GCB server on your computer type in GCB_package folder this:
+
 `python3 gcb_server.py`
 
 So, you can open **127.0.0.1:5000** or **localhost:5000** adress in your web-browser and use GCB
@@ -23,9 +25,11 @@ There is no any dataset in the github-version of the GCB_package. You can downlo
 Most easy way to add dataset is `full_comtainer.py` script
 
 Just type:
+
 `python3 full_container.py -i /PATH_TO_ORTGROUPS_FILE/Orthogroups_file.txt -name NAME_WHAT_YOU_WANT`
 
 For exaple:
+
 `python3 full_container.py -i /home/user/data/Orthogroups_mycoplasma.txt -name mycoplasma_dataset1`
 
 This script consist of many steps and can be executing very long time
