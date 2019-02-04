@@ -67,7 +67,7 @@ For example:
 
 If you dont need complexity data in txt format, you can delete `~/data/complexity_results/Mycoplasma/GCF_000027345.1_ASM2734v1_genomic` folder
 
-After you add all interesting genomes, you need to move or copy this folder to `/GCB_package/data/`. OK, organism ae uplodaed, but we need to dump graph objects for fast access to them.
+After you add all interesting genomes, you need to move or copy this folder to `/GCB_package/data/`. OK, organism is uploaded, but we need to dump graph objects for fast access to them.
 To do it just go to GCB_folder and execute in terminal this:
 
 `python3 dump_script.py`
