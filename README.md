@@ -22,7 +22,7 @@ There is no pre-computed datasets in the github-version of the GCB_package. You 
 
 ### Add data
 
-Most easy way to add dataset is `full_comtainer.py` script
+The easiest way to add dataset is `full_comtainer.py` script
 
 Just type:
 
