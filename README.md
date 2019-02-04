@@ -52,11 +52,13 @@ where `name` is same as the folder name
 For example:
 
 `mkdir ~/data/results/Mycoplasma`
+
 `python3 orthofinder_parse.py -i ~/data/orthofinderResults/Mycoplasma/Orthgroups.txt -o ~/data/results/Mycoplasma/Mycoplasma`
 
 This command creates list of files: *.sif file with graph structure, database *.db file and others
 
 Next, you can add complexity tables for genomes what you want by
+
 `python3 start_computing.py -i PATH_TO_SIF_FILE -o PATH_TO_ANY_OUTPUT_FOLDER --reference CODE_NAME_OF_REFERENCE_GENOME --save_db PATH_TO_THE_CREATED_DB [other parameters]`
 
 For example:
@@ -80,8 +82,11 @@ So, if you update GCB_service web-page, you will see new organism in organisms l
 ## Links
 
 Web-service [Genome Complexity Browser](http://gcb.rcpcm.org)
+
 Python module [gene-graph-lib](https://github.com/DNKonanov/gene_graph_lib)
+
 Command-line tool [geneGraph](https://github.com/DNKonanov/geneGraph)
+
 
 ## References
 
