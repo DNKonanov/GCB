@@ -43,7 +43,7 @@ Parameters:
 ### Advanced
 
 It is possible to create output folder with data manually. Firstly, you need to create folder with name what you want.
-Next, you should create graph structure with `geneGraph` command-line tool
+Next, you should create graph structure with `geneGraph` command-line tool. All geneGraph scripts are located in `source` folder.
 
 `python3 orthofinder_parse.py -i PATH_TO_THE_ORTHOGROUPS_TXT_FILE -o PATH_TO_THE_CREATED_FOLDER/name`,
 
