@@ -36,7 +36,7 @@ def compute_all(output_dir, name, W, I, maxD, minD):
 
 
 if args.i == 'no' or args.name == 'no':
-    print('Choose input file and output name!')
+    print('Choose input file and output directory!')
 
 else:
     try:
