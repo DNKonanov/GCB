@@ -1,4 +1,4 @@
-# GCB_package
+# GCB
 Stand-alone version of the GCB-service
 
 ## Installation manual
