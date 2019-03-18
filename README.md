@@ -72,9 +72,10 @@ To do it just go to GCB_folder and execute in terminal this:
 
 `python3 dump_script.py`
 
-The last step is adding of real genomes names to database (optional). There is `strains_decode.txt` file in GCB_package folder, which contain all existing RefSeq genomes codes.
-Type in terminal `python3 add_names.py` and all available names will be added to db automatically.
-If some your genomes codes is not in `starins_decode.txt`, you can add them to this file or set values in db manually (table "genomes_table", column "genomes_name"). By default their names are set as 'none'.
+
+This command creates memory dump for each available graph object in `data` if such dump don't exists and add all real genomes names.
+
+Note, there is `strains_decode.txt` file in GCB_package folder, which contain all existing RefSeq genomes codes (December 2018). If some your genomes codes is not in `starins_decode.txt`, you can add them to this file or set values in db manually (table "genomes_table", column "genomes_name"). By default their names are set as 'none'.
 
 So, if you update GCB_service web-page, you will see new organism in organisms list.
 
