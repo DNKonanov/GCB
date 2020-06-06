@@ -2,7 +2,3 @@ flask
 gene-graph-lib
 numpy
 flask-cors
-pygraphviz
-
-
-

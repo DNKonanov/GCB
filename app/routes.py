@@ -9,6 +9,7 @@ from gene_graph_lib.draw_graph import get_json_graph
 import sqlite3
 from flask import render_template
 from app.process_graph import delete_double_edges 
+from app.extract_hotspots import extract_hotspot_coordinates
 
 data_path = './data/'
 
@@ -20,17 +21,25 @@ methods = {'by strains complexity': 'window_complexity',
 
 @app.route('/org/<organism>/strain/<ref_strain>/contig/<contig>/start/<og_start>/end/<og_end>/window/<window>/tails/<tails>/pars/<pars>/operons/<operons>/depth/<depth>/freq_min/<freq_min>/hide_edges/<hide>')
 def subgraph(organism, ref_strain, contig, window, og_start, og_end, tails, pars, operons, depth, freq_min, hide):
+
+    # посредством всякой магии возвращает граф в json-формате
+
     print(hide)
     if int(pars) == 0:
         paths = organism + '.dump'
     else:
         paths = organism + '_pars.dump'
 
+    if window > 100:
+        window = 100
+    if tails > 100:
+        tails = 100
+    if depth > 200:
+        depth = 200
+
     graph_file = data_path+organism+'/' + paths
     
     subgr = get_subgraph(graph_file, organism, ref_strain, window=int(window), start=og_start, end=og_end, tails=int(tails), depth=int(depth))
-    
-
 
     graph_json = get_json_graph(subgr, int(freq_min))
     if hide == 'true':
@@ -128,13 +137,32 @@ def subgraph(organism, ref_strain, contig, window, og_start, og_end, tails, pars
             og_index = -1
         
         if (og_index != -1):
-            node['data']['description'] = descripton_list[og_index] + ': ' + str(abs(length_list[og_index]))
+            descripton = '<strong>{gene_description}</strong><br>'.format(
+                gene_description=descripton_list[og_index].replace('_', ' ')
+            )
+            #descripton += 'Pfam: {pfam}<br>'.format(pfam='PF002301')
+            #descripton += 'COG: {cog}'.format(cog='U')
+
+            node['data']['description'] = descripton
         else:
             node['data']['description'] = 'null'
         if node['data']['id'] in ref:
             try:
                 coord_index = coordinates[0].index(node['data']['id'])
-                node['data']['description'] = coordinates[2][coord_index] + ': ' + str(abs(length_list[og_index])) + ' (' + str(int(coordinates[1][coord_index])) + ')'
+
+                descripton = '<strong>{gene_description}</strong><br>'.format(
+                    gene_description=coordinates[2][coord_index].replace('_', ' ')
+                )
+                descripton += 'Located: {start}-{end}<br>'.format(
+                    start=coordinates[1][coord_index][0],
+                    end=coordinates[1][coord_index][1]
+                )
+                #descripton += 'Pfam: {pfam}<br>'.format(pfam='PF002301')
+                #descripton += 'COG: {cog}'.format(cog='U')
+
+
+                node['data']['description'] = descripton
+
             except ValueError:
                 pass
             if (node ['data']['color'] != '#ff0000' and node['data']['color'] != 'pink'):
@@ -163,7 +191,7 @@ def index():
 
 @app.route('/org/')
 def get_org_list():
-    global org
+    # опрашивает имеющиеся организмы
     organisms = next(os.walk(data_path))[1]
     org = organisms[0]
     return jsonify(organisms)
@@ -171,6 +199,8 @@ def get_org_list():
 
 @app.route('/org/<org>/stamms/')
 def get_stamm_list(org):
+
+    # опрашивает из БД штаммы для выбранного организма
     connect = sqlite3.connect(data_path + org + '/' + org + '.db')
     c = connect.cursor()
     
@@ -183,6 +213,8 @@ def get_stamm_list(org):
 
 @app.route('/org/<org>/stamms/<stamm>/contigs/')
 def get_contig_list(org, stamm):
+
+    #опрашивает из БД контиги для выбранного штамма
     connect = sqlite3.connect(data_path + org + '/' + org + '.db')
     c = connect.cursor()
     stamm_key = [row for row in c.execute('SELECT genome_id FROM genomes_table WHERE genome_code = "' + stamm + '"')][0][0]
@@ -191,15 +223,23 @@ def get_contig_list(org, stamm):
     connect.close()
     return jsonify(contigs)
 
-@app.route('/org/<org>/stamms/<stamm>/contigs/<contig>/methods/<method>/pars/<pars>/complexity/window/<window>/')
-def get_complexity(org, stamm, contig, pars, method, window):
+@app.route('/org/<org>/stamms/<stamm>/contigs/<contig>/methods/<method>/pars/<pars>/complexity/window/<window>/coef/<coef>')
+def get_complexity(org, stamm, contig, pars, method, window, coef):
+
+    # возвращает выбранный профиль сложности из БД
     
     complexity = get_complexity_from_db(data_path, org, stamm, contig, int(pars), methods[method], window)
-    return jsonify(complexity)
+    
+    hotspotpositions = extract_hotspot_coordinates(complexity[0], complexity[2], coef=float(coef))
+
+
+    return jsonify(complexity + hotspotpositions)
 
 
 @app.route('/org/<org>/stamms/<stamm>/complexity_windows/pars/<pars>/')
 def get_complexity_windows(org, stamm, pars):
+
+    # опрашивает имеющиеся в базе размеры окна для выбранного генома
 
     windows = get_windows_from_db(data_path, org, stamm, int(pars))
 
@@ -207,8 +247,35 @@ def get_complexity_windows(org, stamm, pars):
     return jsonify(windows)
 
 
+@app.route('/get_genes/org/<org>/strain/<stamm>/pars/<pars>')
+def get_gene_names(org, stamm, pars):
+
+    # поиск по названиям генов в БД для данного организма
+
+    if pars == 'false':
+        connect = sqlite3.connect(data_path + org + '/' + org + '.db')
+
+    elif pars == 'true':
+        connect = sqlite3.connect(data_path + org + '/' + org + '_pars.db')
+
+    c = connect.cursor()
+
+    stamm_key = [row for row in c.execute('SELECT genome_id FROM genomes_table WHERE genome_code = "' + stamm + '"')][0][0]
+    contigs = [row for row in c.execute('SELECT contig_id, contig_code FROM contigs_table WHERE genome_id = ' + str(stamm_key))]
+
+    genes = []
+    for contig in contigs:
+        query = 'SELECT description FROM nodes_table WHERE contig_id=' + str(contig[0])
+        genes += [q for q in c.execute(query)]
+
+    connect.close()
+    return jsonify(genes)
+
+
 @app.route('/search/org/<org>/strain/<stamm>/pars/<pars>/input/<input>/')
 def search(org, stamm, pars, input):
+
+    # поиск по названиям генов в БД для данного организма
 
     if pars == 'false':
         connect = sqlite3.connect(data_path + org + '/' + org + '.db')
@@ -224,6 +291,16 @@ def search(org, stamm, pars, input):
     table = []
     for contig in contigs:
         query = 'SELECT node_name, description, (start_coord+end_coord)/2 FROM nodes_table WHERE contig_id=' + str(contig[0])
-        table += [list(q) + [contig[1]] for q in c.execute(query) if input.lower() in q[1].lower()]
+        
+        table += [list(q) + [contig[1]] for q in c.execute(query)]
 
+    connect.close()
+    
+    input = input.replace('_', ' ').replace('\t', ' ')
+    input_parts = input.split(' ')
+    
+    for p in input_parts:
+        table = [t for t in table if p.lower() in t[1].lower()]
+    
+    
     return jsonify(table)
