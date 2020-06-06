@@ -29,9 +29,9 @@ There is no pre-computed datasets in the github-version of the GCB_package.
 [GeneGraph](https://github.com/DNKonanov/geneGraph) is a command-line tool was developed to provide graphs and complexity profiles
 generation.
 
-Suppose that we have a number of `*.fna` files for 100 different genomes of Mycoplasma. The first step is the annottion and the inference of orthology groups by [this Snakemake script](https://github.com/paraslonic/orthosnake). The desired file is `OrthoGroups.txt`.
+Suppose that we have a number of `*.fna` files for 100 different genomes of Mycoplasma. The first step is the genomes annotation and the inference of orthology groups by [this Snakemake script](https://github.com/paraslonic/orthosnake). The desired file is `OrthoGroups.txt`.
 
-Next, we shuld use `gg.py` script from geneGraph:
+Next, we shuold use `gg.py` script from geneGraph:
 
 `python gg.py -i [path to OrthoGroups.txt] -o Mycoplasma`
 
@@ -51,7 +51,7 @@ Final result is a folder with name `Mycoplasma`. This folder contains:
 * `Mycoplasma_genes.sif` - information about all genes in the graph in txt format
 * `Mycoplasma_context.txt` - number of different gene contexts for each node in the graph
 * all these files with `_pars` suffix contain the same information for graph with orthologized paralogues
-* a number of folders. These folders contain complexity profiles for each genome. Structure of folder is described [here](https://github.com/DNKonanov/geneGraph)
+* a number of folders. These folders contain complexity profiles for each genome. Structure of folders is described [here](https://github.com/DNKonanov/geneGraph)
 
 Now we should move this `Mycoplasma` folder to `GCB/data`. If there is no `data` folder in `GCB` root folder, just create it with `mkdir data`. It's all.
 
