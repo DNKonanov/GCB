@@ -30,6 +30,13 @@ def subgraph(organism, ref_strain, contig, window, og_start, og_end, tails, pars
     else:
         paths = organism + '_pars.dump'
 
+    if int(window) > 100:
+        window = 100
+    if int(tails) > 100:
+        tails = 100
+    if int(depth) > 200:
+        depth = 200
+
     graph_file = data_path+organism+'/' + paths
     
     subgr = get_subgraph(graph_file, organism, ref_strain, window=int(window), start=og_start, end=og_end, tails=int(tails), depth=int(depth))
@@ -130,13 +137,37 @@ def subgraph(organism, ref_strain, contig, window, og_start, og_end, tails, pars
             og_index = -1
         
         if (og_index != -1):
-            node['data']['description'] = descripton_list[og_index] + ': ' + str(abs(length_list[og_index]))
+            descripton = '<strong>{gene_description}</strong><br>'.format(
+                gene_description=descripton_list[og_index].replace('_', ' ')
+            )
+
+            descripton += 'Length: {length}<br>'.format(length=abs(length_list[og_index]))
+            #descripton += 'Pfam: {pfam}<br>'.format(pfam='PF002301')
+            #descripton += 'COG: {cog}'.format(cog='U')
+            node['data']['description'] = descripton
         else:
             node['data']['description'] = 'null'
         if node['data']['id'] in ref:
             try:
                 coord_index = coordinates[0].index(node['data']['id'])
-                node['data']['description'] = coordinates[2][coord_index] + ': ' + str(abs(length_list[og_index])) + ' (' + str(int(coordinates[1][coord_index])) + ')'
+
+                descripton = '<strong>{gene_description}</strong><br>'.format(
+                    gene_description=coordinates[2][coord_index].replace('_', ' ')
+                )
+                descripton += 'Located: {start}-{end}<br>'.format(
+                    start=coordinates[1][coord_index][0],
+                    end=coordinates[1][coord_index][1]
+                )
+
+                descripton += 'Length: {length}<br>'.format(
+                    length=abs(coordinates[1][coord_index][0] - coordinates[1][coord_index][1])
+                )
+                #descripton += 'Pfam: {pfam}<br>'.format(pfam='PF002301')
+                #descripton += 'COG: {cog}'.format(cog='U')
+
+
+                node['data']['description'] = descripton
+
             except ValueError:
                 pass
             if (node ['data']['color'] != '#ff0000' and node['data']['color'] != 'pink'):
@@ -265,7 +296,16 @@ def search(org, stamm, pars, input):
     table = []
     for contig in contigs:
         query = 'SELECT node_name, description, (start_coord+end_coord)/2 FROM nodes_table WHERE contig_id=' + str(contig[0])
-        table += [list(q) + [contig[1]] for q in c.execute(query) if input.lower() in q[1].lower()]
+        
+        table += [list(q) + [contig[1]] for q in c.execute(query)]
 
     connect.close()
+    
+    input = input.replace('_', ' ').replace('\t', ' ')
+    input_parts = input.split(' ')
+    
+    for p in input_parts:
+        table = [t for t in table if p.lower() in t[1].lower()]
+    
+    
     return jsonify(table)
