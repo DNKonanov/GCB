@@ -2,4 +2,3 @@ flask
 gene-graph-lib
 numpy
 flask-cors
-matplotlib
