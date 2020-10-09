@@ -59,7 +59,7 @@ Reload `gcb_server.py`, open Left Panel, click to Organism selector and select y
 
 ## Links
 
-Web-service [Genome Complexity Browser](http://gcb.rcpcm.org)
+Web-service [Genome Complexity Browser](https://gcb.rcpcm.org)
 
 Python module [gene-graph-lib](https://github.com/DNKonanov/gene_graph_lib)
 
